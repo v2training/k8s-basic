@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend-api
-        image: your-registry/backend-api:latest
+        image: ${REGISTRY_NAME}.azurecr.io/backend-api:latest
         ports:
         - containerPort: 5000
         env:

@@ -15,12 +15,9 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: your-registry/frontend-app:latest
+        image: ${REGISTRY_NAME}.azurecr.io/frontend-app:latest
         ports:
         - containerPort: 3000
-        env:
-        - name: REACT_APP_API_URL
-          value: "http://backend-api-service:5000/api"
         resources:
           requests:
             cpu: 100m

@@ -7,7 +7,8 @@ function App() {
   const [newUser, setNewUser] = useState({ name: '', email: '' });
   const [loading, setLoading] = useState(true);
   
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  // Updated to use relative /api path - Ingress will route it
+  const API_BASE_URL = '/api';
 
   useEffect(() => {
     fetchUsers();
@@ -28,11 +29,27 @@ function App() {
   const createUser = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_BASE_URL}/users`, newUser);
-      setNewUser({ name: '', email: '' });
-      fetchUsers();
+      const response = await axios.post(`${API_BASE_URL}/users`, newUser);
+      
+      //if I want to debug the response
+      //console.log('Response status:', response.status);
+      //console.log('Response data:', response.data);
+      //console.log('Response data type:', typeof response.data);
+
+      if (response.status === 200 || response.status === 201) {
+        if (response.data && response.data.id) {
+          console.log('Adding user to state:', response.data);
+          setUsers(prevUsers => [...prevUsers, response.data]);
+          setNewUser({ name: '', email: '' });
+          console.log('User added successfully');
+        } else {
+          console.error('User creation response did not contain an ID.', response.data);          
+          await fetchUsers();
+          setNewUser({ name: '', email: '' });
+        }
+      }
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error creating user:', error);      
     }
   };
 
